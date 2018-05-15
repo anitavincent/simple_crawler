@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8-*-
+
 from unittest import TestCase
 from productpage import ProductPage
 from bs4 import BeautifulSoup
