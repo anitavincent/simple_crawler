@@ -20,7 +20,7 @@ class ProductPageTest(TestCase):
             {})
 
         links, content = page.parse()
-        self.assertEqual("Máscara Facial Ricca - Bubble Help! - 1 Un", content)
+        self.assertNotEqual("", content)
 
     def test_get_links(self):
 
@@ -54,15 +54,24 @@ class ProductPageTest(TestCase):
 
         self.assertEqual(content, page.get_content())
 
+        page = ProductPage(
+            "https://www.epocacosmeticos.com.br/artliner-lancome-delineador/p",
+            "https://www.epocacosmeticos.com.br/",
+            {})
+
+        content = "Artliner Lancôme - Delineador"
+
+        self.assertEqual(content, page.get_content())
+
     def test_is_scrapping_target(self):
         page = ProductPage(
             "https://www.epocacosmeticos.com.br/mascara-facial-ricca-bubble-help/p",
             "https://www.epocacosmeticos.com.br/",
             {})
-        self.assertEqual(True, page.is_scrapping_target())
+        self.assertTrue(page.is_scrapping_target())
 
         page = ProductPage(
             "https://www.epocacosmeticos.com.br/",
             "https://www.epocacosmeticos.com.br/",
             {})
-        self.assertEqual(False, page.is_scrapping_target())
+        self.assertFalse(page.is_scrapping_target())
