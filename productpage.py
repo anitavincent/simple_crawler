@@ -28,6 +28,8 @@ class ProductPage:
     def get_links(self):
         links_set = set()
         a_tags = self.soup.find_all('a', href=True)
+        if not a_tags:
+            raise ValueError("Could not find any links on page")
 
         for tag_content in a_tags:
             link = tag_content['href']
@@ -38,8 +40,17 @@ class ProductPage:
         return links_set
 
     def get_content(self):
-        tags = self.soup.find_all("div", class_="productName")
-        return tags[0].text
+        content = {}
+        name_tags = self.soup.find_all("div", class_="productName")
+        title_tags = self.soup.find_all("title")
+
+        if not name_tags:
+            raise ValueError("Could not find product name on page")
+
+        content['product_name'] = name_tags[0].text
+        content['title'] = title_tags[0].string
+
+        return content
 
     def is_scrapping_target(self):
         regex = "^{}{}$".format(self.base_url, self.target_regex)
