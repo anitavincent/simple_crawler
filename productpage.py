@@ -1,4 +1,5 @@
 import requests
+from requests.exceptions import RequestException
 from bs4 import BeautifulSoup
 import re
 
@@ -10,7 +11,10 @@ class ProductPage:
     def __init__(self, page_url, base_url, queued_urls):
         self.page_url = page_url
         self.base_url = base_url
-        self.page_content = requests.get(page_url)
+        try:
+            self.page_content = requests.get(page_url)
+        except requests.exceptions.RequestException as e:
+            raise RequestException(e)
         self.soup = BeautifulSoup(self.page_content.content, 'html.parser')
         self.queued_urls = queued_urls
 

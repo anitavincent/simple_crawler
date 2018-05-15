@@ -1,11 +1,17 @@
 from unittest import TestCase
 from productpage import ProductPage
 from bs4 import BeautifulSoup
+from requests.exceptions import RequestException
 
 
 class ProductPageTest(TestCase):
 
     def test_parse(self):
+
+        self.assertRaises(RequestException, ProductPage,
+                          "dstseresr",
+                          "dfdsfdsdf",
+                          {})
 
         page = ProductPage(
             "https://www.epocacosmeticos.com.br/",
