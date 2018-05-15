@@ -49,12 +49,12 @@ class ProductPageTest(TestCase):
 
         self.assertEqual(links, page.get_links())
 
-        # page = ProductPage(
-        #     "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Cat_poster_1.jpg/520px-Cat_poster_1.jpg",
-        #     "https://wikipedia.org",
-        #     {})
+        page = ProductPage(
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Cat_poster_1.jpg/520px-Cat_poster_1.jpg",
+            "https://wikipedia.org",
+            {})
 
-        # self.assertRaises(ValueError, page.get_links)
+        self.assertRaises(ValueError, page.get_links)
 
     def test_get_content(self):
 
@@ -63,18 +63,22 @@ class ProductPageTest(TestCase):
             "https://www.epocacosmeticos.com.br/",
             {})
 
-        content = "Máscara Facial Ricca - Bubble Help! - 1 Un"
+        product_name = "Máscara Facial Ricca - Bubble Help! - 1 Un"
+        title = "Máscara Facial Ricca - Bubble Help! - Época Cosméticos"
 
-        self.assertEqual(content, page.get_content()['product_name'])
+        self.assertEqual(product_name, page.get_content()['product_name'])
+        self.assertEqual(title, page.get_content()['title'])
 
         page = ProductPage(
             "https://www.epocacosmeticos.com.br/artliner-lancome-delineador/p",
             "https://www.epocacosmeticos.com.br/",
             {})
 
-        content = "Artliner Lancôme - Delineador"
+        product_name = "Artliner Lancôme - Delineador"
+        title = "Artliner Lancôme - Delineador - Época Cosméticos"
 
-        self.assertEqual(content, page.get_content()['product_name'])
+        self.assertEqual(product_name, page.get_content()['product_name'])
+        self.assertEqual(title, page.get_content()['title'])
 
         page = ProductPage(
             "https://google.com",
