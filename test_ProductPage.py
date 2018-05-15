@@ -9,10 +9,20 @@ class ProductPageTest(TestCase):
 
         page = ProductPage(
             "http://webscraper.io/screenshots",
-            "http://webscraper.io/")
+            "http://webscraper.io/",
+            {})
 
-        links = ["/", "#", "https://forum.webscraper.io/", "/service", "/data-specialist",
-                 "http://chrome.google.com/webstore/detail/web-scraper/jnhgnonknehpejjnehehllkliplmbmhn"]
+        links = {'/',
+                 '#',
+                 'https://forum.webscraper.io/',
+                 '/service',
+                 '/data-specialist',
+                 'http://chrome.google.com/webstore/detail/web-scraper/jnhgnonknehpejjnehehllkliplmbmhn',
+                 '/contact',
+                 '/screenshots',
+                 '/tutorials',
+                 '/test-sites',
+                 '/documentation'}
 
         self.assertEqual(links, page.get_links())
 
@@ -20,7 +30,8 @@ class ProductPageTest(TestCase):
 
         page = ProductPage(
             "https://www.epocacosmeticos.com.br/mascara-facial-ricca-bubble-help/p",
-            "https://www.epocacosmeticos.com.br/")
+            "https://www.epocacosmeticos.com.br/",
+            {})
 
         content = "Máscara Facial Ricca - Bubble Help! - 1 Un"
 
@@ -29,10 +40,12 @@ class ProductPageTest(TestCase):
     def test_is_scrapping_target(self):
         page = ProductPage(
             "https://www.epocacosmeticos.com.br/mascara-facial-ricca-bubble-help/p",
-            "https://www.epocacosmeticos.com.br/")
+            "https://www.epocacosmeticos.com.br/",
+            {})
         self.assertEqual(True, page.is_scrapping_target())
 
         page = ProductPage(
             "https://www.epocacosmeticos.com.br/",
-            "https://www.epocacosmeticos.com.br/")
+            "https://www.epocacosmeticos.com.br/",
+            {})
         self.assertEqual(False, page.is_scrapping_target())

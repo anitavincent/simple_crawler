@@ -7,11 +7,12 @@ class ProductPage:
 
     target_regex = ".*/p"
 
-    def __init__(self, page_url, base_url):
+    def __init__(self, page_url, base_url, queued_urls):
         self.page_url = page_url
         self.base_url = base_url
         self.page_content = requests.get(page_url)
         self.soup = BeautifulSoup(self.page_content.content, 'html.parser')
+        self.queued_urls = queued_urls
 
     def parse(self):
         links = self.get_links()
@@ -21,12 +22,16 @@ class ProductPage:
         return [links, self.soup]
 
     def get_links(self):
-        links_list = []
+        links_set = set()
         a_tags = self.soup.find_all('a', href=True)
-        for tag_content in a_tags:
-            links_list.append(tag_content['href'])
 
-        return links_list
+        for tag_content in a_tags:
+            link = tag_content['href']
+            if link not in self.queued_urls:
+                self.queued_urls[link] = False
+                links_set.add(link)
+
+        return links_set
 
     def get_content(self):
         tags = self.soup.find_all("div", class_="productName")
