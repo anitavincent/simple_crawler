@@ -19,7 +19,7 @@ class ProductPage:
         content = ""
         if self.is_scrapping_target():
             content = self.get_content()
-        return [links, self.soup]
+        return (links, content)
 
     def get_links(self):
         links_set = set()

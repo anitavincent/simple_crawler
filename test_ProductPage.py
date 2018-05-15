@@ -5,6 +5,23 @@ from bs4 import BeautifulSoup
 
 class ProductPageTest(TestCase):
 
+    def test_parse(self):
+
+        page = ProductPage(
+            "https://www.epocacosmeticos.com.br/",
+            "https://www.epocacosmeticos.com.br/",
+            {})
+        links, content = page.parse()
+        self.assertEqual("", content)
+
+        page = ProductPage(
+            "https://www.epocacosmeticos.com.br/mascara-facial-ricca-bubble-help/p",
+            "https://www.epocacosmeticos.com.br/",
+            {})
+
+        links, content = page.parse()
+        self.assertEqual("Máscara Facial Ricca - Bubble Help! - 1 Un", content)
+
     def test_get_links(self):
 
         page = ProductPage(
