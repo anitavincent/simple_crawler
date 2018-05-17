@@ -4,7 +4,7 @@ from simple_crawler.log import Log
 
 
 def main():
-    manager = FileManager("products.csv", "found_urls.csv")
+    manager = FileManager("found_urls.csv", "products.csv")
     log = Log(verbose=True)
     s = Crawler("https://www.epocacosmeticos.com.br", manager, log)
     s.crawl(0.20, 20)
