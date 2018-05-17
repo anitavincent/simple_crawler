@@ -13,20 +13,20 @@ class PageTest(TestCase):
 
         self.assertRaises(RequestException, Page,
                           "dstseresr",
-                          "dfdsfdsdf",
-                          {})
+                          "dstseresr",
+                          set())
 
         page = Page(
             "https://www.epocacosmeticos.com.br/",
             "https://www.epocacosmeticos.com.br/",
-            {})
+            set())
         links, content = page.parse()
         self.assertEqual("", content)
 
         page = Page(
             "https://www.epocacosmeticos.com.br/mascara-facial-ricca-bubble-help/p",
             "https://www.epocacosmeticos.com.br/",
-            {})
+            set())
 
         links, content = page.parse()
         self.assertNotEqual("", content)
@@ -36,7 +36,7 @@ class PageTest(TestCase):
         page = Page(
             "http://webscraper.io/screenshots",
             "http://webscraper.io/",
-            {})
+            set())
 
         links = {'/',
                  '#',
@@ -54,8 +54,8 @@ class PageTest(TestCase):
 
         page = Page(
             "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Cat_poster_1.jpg/520px-Cat_poster_1.jpg",
-            "https://wikipedia.org",
-            {})
+            "https://upload.wikimedia.org/",
+            set())
 
         self.assertRaises(ValueError, page.get_links)
 
@@ -64,7 +64,7 @@ class PageTest(TestCase):
         page = Page(
             "https://www.epocacosmeticos.com.br/mascara-facial-ricca-bubble-help/p",
             "https://www.epocacosmeticos.com.br/",
-            {})
+            set())
 
         product_name = "Máscara Facial Ricca - Bubble Help! - 1 Un"
         title = "Máscara Facial Ricca - Bubble Help! - Época Cosméticos"
@@ -75,7 +75,7 @@ class PageTest(TestCase):
         page = Page(
             "https://www.epocacosmeticos.com.br/artliner-lancome-delineador/p",
             "https://www.epocacosmeticos.com.br/",
-            {})
+            set())
 
         product_name = "Artliner Lancôme - Delineador"
         title = "Artliner Lancôme - Delineador - Época Cosméticos"
@@ -86,7 +86,7 @@ class PageTest(TestCase):
         page = Page(
             "https://google.com",
             "https://google.com",
-            {})
+            set())
 
         self.assertRaises(ValueError, page.get_content)
 
@@ -94,11 +94,11 @@ class PageTest(TestCase):
         page = Page(
             "https://www.epocacosmeticos.com.br/mascara-facial-ricca-bubble-help/p",
             "https://www.epocacosmeticos.com.br/",
-            {})
+            set())
         self.assertTrue(page.is_scrapping_target())
 
         page = Page(
             "https://www.epocacosmeticos.com.br/",
             "https://www.epocacosmeticos.com.br/",
-            {})
+            set())
         self.assertFalse(page.is_scrapping_target())
