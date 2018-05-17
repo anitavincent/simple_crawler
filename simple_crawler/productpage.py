@@ -11,21 +11,28 @@ class ProductPage:
     def __init__(self, page_url, base_url, queued_urls):
         self.page_url = page_url
         self.base_url = base_url
+
+        if not self.is_parsing_target():
+            raise Exception("Page out of website scope: {}".format(page_url))
+
         try:
             self.page_content = requests.get(page_url)
         except requests.exceptions.RequestException as e:
             raise RequestException(e)
         self.soup = BeautifulSoup(self.page_content.content, 'html.parser')
-        self.queued_urls = queued_urls
+        self.queued_urls = queued_urls.copy()
 
     def parse(self):
+
         links = self.get_links()
         content = ""
         if self.is_scrapping_target():
             content = self.get_content()
-        return (links, content)
+            content["url"] = self.page_url
+        return links, content
 
     def get_links(self):
+
         links_set = set()
         a_tags = self.soup.find_all('a', href=True)
         if not a_tags:
@@ -34,13 +41,14 @@ class ProductPage:
         for tag_content in a_tags:
             link = tag_content['href']
             if link not in self.queued_urls:
-                self.queued_urls[link] = False
+                self.queued_urls.add(link)
                 links_set.add(link)
 
         return links_set
 
     def get_content(self):
         content = {}
+
         name_tags = self.soup.find_all("div", class_="productName")
         title_tags = self.soup.find_all("title")
 
@@ -54,6 +62,12 @@ class ProductPage:
 
     def is_scrapping_target(self):
         regex = "^{}{}$".format(self.base_url, self.target_regex)
+        if re.match(regex, self.page_url):
+            return True
+        return False
+
+    def is_parsing_target(self):
+        regex = "^({}|/).*$".format(self.base_url)
         if re.match(regex, self.page_url):
             return True
         return False
