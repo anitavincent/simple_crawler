@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import re
 
 
-class ProductPage:
+class Page:
 
     target_regex = ".*/p"
 
