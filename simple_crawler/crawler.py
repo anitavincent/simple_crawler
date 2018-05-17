@@ -1,5 +1,5 @@
-from simple_crawler.page import Page
-from simple_crawler.filemanager import FileManager
+from page import Page
+from filemanager import FileManager
 from concurrent.futures import ThreadPoolExecutor
 from requests.exceptions import RequestException
 from concurrent.futures import wait
@@ -39,7 +39,7 @@ class Crawler:
     def get_url_batch(self, size):
         batch = []
 
-        while not self.url_queue.empty() and len(batch) <= size:
+        while not self.url_queue.empty() and len(batch) < size:
             batch.append(self.url_queue.get())
 
         return batch
