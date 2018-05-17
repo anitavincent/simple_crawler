@@ -14,11 +14,11 @@ class ProductPage:
 
         if not self.is_parsing_target():
             raise Exception("Page out of website scope: {}".format(page_url))
-
         try:
-            self.page_content = requests.get(page_url)
+            self.page_content = requests.get(page_url, timeout=10)
         except requests.exceptions.RequestException as e:
             raise RequestException(e)
+
         self.soup = BeautifulSoup(self.page_content.content, 'html.parser')
         self.queued_urls = queued_urls.copy()
 
