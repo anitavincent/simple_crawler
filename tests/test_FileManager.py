@@ -5,7 +5,7 @@ from filemanager import FileManager
 class FileManagerTest(TestCase):
 
     def setUp(self):
-        self.manager = FileManager("found_urls.csv", "products.csv")
+        self.manager = FileManager("products.csv", "urls.db")
 
     def test_change_products_result(self):
         self.manager.clear_result()
@@ -22,19 +22,26 @@ class FileManagerTest(TestCase):
         products = self.manager.get_product_names_set()
         self.assertEqual(set(), products)
 
-    def test_change_found_urls(self):
+    def test_change_saved_urls(self):
 
-        self.manager.clear_found_urls()
-        urls = self.manager.get_urls_dict()
-        self.assertEqual({}, urls)
+        self.manager.cleanup_database()
+        self.manager.setup_database()
 
-        self.manager.add_to_found_urls("epoca.com")
-        self.manager.add_to_found_urls("google.com")
+        self.manager.add_found_url("epoca.com")
+        self.manager.add_found_url("google.com")
+        self.manager.add_found_url("wow.com")
+        self.manager.add_found_url("fb.com")
 
-        products = self.manager.get_urls_dict()
+        self.manager.change_url_to_parsed("wow.com")
+        self.manager.change_url_to_parsed("fb.com")
+
+        saved_urls = self.manager.get_saved_urls_set()
         self.assertEqual(
-            {"epoca.com": False, "google.com": False}, products)
+            {"epoca.com", "google.com", "wow.com", "fb.com"}, saved_urls)
 
-        self.manager.clear_found_urls()
-        urls = self.manager.get_urls_dict()
-        self.assertEqual({}, urls)
+        parsed_urls = self.manager.get_unparsed_urls_set()
+        self.assertEqual(
+            {"epoca.com", "google.com"}, parsed_urls)
+
+        self.manager.cleanup_database()
+        self.assertTrue(self.manager.database_is_empty())
