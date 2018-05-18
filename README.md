@@ -14,3 +14,9 @@ there will be a log on /data/log.
 
 If the execution is interrupted, run it again and
 it will pick up where it left off.
+
+# Docker
+
+run docker-compose up to start container
+
+There is no log when using docker
