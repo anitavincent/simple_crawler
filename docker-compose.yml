@@ -1,0 +1,10 @@
+version: '2'
+services:
+
+  crawler:
+    image: anitav/simple_crawler
+    volumes:
+    - ./data/:/home/anita/Desktop/simple_crawler/data/
+
+volumes:
+ data:
