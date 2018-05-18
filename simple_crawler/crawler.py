@@ -18,31 +18,19 @@ class Crawler:
         self.url_set = {"{}/".format(base_url), }
         self.product_name_set = set()
 
-    def add_content(self, url, title, product_name):
-        if product_name in self.product_name_set:
-            return
+    def crawl(self, request_delay, thread_quant):
+        self.url_queue.put(self.base_url)
+        self.thread_pool = ThreadPoolExecutor(max_workers=thread_quant)
 
-        self.product_name_set.add(product_name)
-        self.file_manager.add_to_results(url, product_name, title)
+        while not self.url_queue.empty():
 
-    def queue_links(self, links):
-        for link in links:
-            link = self.get_full_url(link)
+            url_batch = self.get_url_batch(thread_quant)
 
-            if link in self.url_set:
-                continue
+            future_list = self.run_threads(url_batch, request_delay)
+            self.process_threads_result(future_list)
 
-            self.url_set.add(link)
-            self.url_queue.put(link)
-
-    # gets a batch of urls from queue
-    def get_url_batch(self, size):
-        batch = []
-
-        while not self.url_queue.empty() and len(batch) < size:
-            batch.append(self.url_queue.get())
-
-        return batch
+            self.log.add_pages_processed(
+                len(self.url_set), len(self.product_name_set))
 
     def parse(self, url):
         links = ""
@@ -87,19 +75,31 @@ class Crawler:
                                  'title'], content['product_name'])
             self.queue_links(links)
 
-    def crawl(self, request_delay, thread_quant):
-        self.url_queue.put(self.base_url)
-        self.thread_pool = ThreadPoolExecutor(max_workers=thread_quant)
+    def add_content(self, url, title, product_name):
+        if product_name in self.product_name_set:
+            return
 
-        while not self.url_queue.empty():
+        self.product_name_set.add(product_name)
+        self.file_manager.add_to_results(url, product_name, title)
 
-            url_batch = self.get_url_batch(thread_quant)
+    def queue_links(self, links):
+        for link in links:
+            link = self.get_full_url(link)
 
-            future_list = self.run_threads(url_batch, request_delay)
-            self.process_threads_result(future_list)
+            if link in self.url_set:
+                continue
 
-            self.log.add_pages_processed(
-                len(self.url_set), len(self.product_name_set))
+            self.url_set.add(link)
+            self.url_queue.put(link)
+
+    # gets a batch of urls from queue
+    def get_url_batch(self, size):
+        batch = []
+
+        while not self.url_queue.empty() and len(batch) < size:
+            batch.append(self.url_queue.get())
+
+        return batch
 
     def get_full_url(self, url):
         regex = "^/.*$"
