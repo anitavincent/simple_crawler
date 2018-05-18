@@ -14,12 +14,25 @@ class Crawler:
         self.base_url = base_url
         self.file_manager = file_manager
         self.log = log
-        self.url_queue = queue.Queue()
-        self.url_set = {"{}/".format(base_url), }
         self.product_name_set = set()
+        self.url_queue = queue.Queue()
+        # restores past state if saved urls database is full
+        self.restore_state(file_manager)
+
+    def restore_state(self, file_manager):
+        if file_manager.database_is_empty():
+            file_manager.setup_database()
+            self.url_queue.put(self.base_url)
+            self.url_set = {"{}/".format(self.base_url), }
+        else:
+            self.log.add_message("Restored parsed urls")
+            self.url_set = file_manager.get_saved_urls_set()
+            self.product_name_set = file_manager.get_product_names_set()
+            unparsed_urls = file_manager.get_unparsed_urls_set()
+            for url in unparsed_urls:
+                self.url_queue.put(url)
 
     def crawl(self, request_delay, thread_quant):
-        self.url_queue.put(self.base_url)
         self.thread_pool = ThreadPoolExecutor(max_workers=thread_quant)
 
         while not self.url_queue.empty():
@@ -50,7 +63,6 @@ class Crawler:
         return (links, content)
 
     def run_threads(self, urls, request_delay):
-
         future_list = []
         for url in urls:
                 # wait before next request
@@ -60,6 +72,8 @@ class Crawler:
             future_list.append(future)
 
         wait(future_list, return_when="ALL_COMPLETED")
+        for url in urls:
+            self.file_manager.change_url_to_parsed(url)
 
         return future_list
 
@@ -91,6 +105,7 @@ class Crawler:
 
             self.url_set.add(link)
             self.url_queue.put(link)
+            self.file_manager.add_found_url(link)
 
     # gets a batch of urls from queue
     def get_url_batch(self, size):
@@ -103,6 +118,9 @@ class Crawler:
 
     def get_full_url(self, url):
         regex = "^/.*$"
+        regex_opt = "^http.*$"
         if re.match(regex, url):
             return "{}{}".format(self.base_url, url)
-        return url
+        if re.match(regex_opt, url):
+            return url
+        return ""
