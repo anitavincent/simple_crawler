@@ -3,11 +3,11 @@ Simple product crawler that gets name and url for all products on a webpage
 
 To run, install all requirements with:
 
-pip install -r requirements.txt
+`pip install -r requirements.txt`
 
 Then, run:
 
-make run
+`make run`
 
 The results will be stored on /data/products.csv,
 there will be a log on /data/log.
@@ -17,6 +17,8 @@ it will pick up where it left off.
 
 # Docker
 
-run docker-compose up to start container
+You must have docker and docker-compose installed
 
-There is no log when using docker
+to start container:
+
+`make docker`
